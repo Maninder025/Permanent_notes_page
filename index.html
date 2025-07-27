@@ -3,30 +3,415 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Permanent Notes</title>
-    <link rel="stylesheet" href="style.css">
+    <title>My Notebook</title>
+    <style>
+        /* General Body & Font Styling */
+        body {
+            font-family: 'Brush Script MT', cursive;
+            margin: 0;
+            background-color: #f90e06e2; /* Start with cover color */
+            transition: background-color 0.5s ease;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* --- Page 1: Book Cover --- */
+        #book-cover-page {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #ecf0f1;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .book-title h1 {
+            font-size: clamp(2rem, 10vw, 3.5rem);
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
+        .book-title p {
+            font-style: italic;
+            font-size: clamp(1rem, 5vw, 1.2rem);
+        }
+
+        #open-book-btn {
+            margin-top: 40px;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            background-color: #1c224a;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        #open-book-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+        }
+
+
+        /* --- Page 2: Main App --- */
+        #main-app-page {
+            background-color: #fdf5e6; /* Old Lace - Parchment color */
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .app-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fffaf0; /* Floral white */
+            padding: 20px 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+
+        /* Navigation inside the app */
+        .app-navigation {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+
+        .app-navigation button {
+            padding: 10px 20px;
+            background: #f90e06e2;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.2s ease;
+        }
+
+        .app-navigation button:hover {
+            background-color: #5a6875;
+        }
+        
+        #close-book-btn {
+            background-color: #34495e; /* Darker gray for close */
+        }
+
+        /* Editor for new notes */
+        #note-editor h2, #notes-container h2 {
+            text-align: center;
+            color: #f90e06e2;
+            font-weight: normal;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            font-family: 'Brush Script MT', cursive;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+            border-radius: 3px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            padding: 15px;
+            font-size: 1.1rem;
+            font-family: 'Brush Script MT', cursive;
+            background-color: #fff;
+            margin-bottom: 10px;
+            border-radius: 3px;
+        }
+
+        .editor-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .editor-buttons button {
+            flex-grow: 1;
+            padding: 12px;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: opacity 0.2s ease;
+        }
+
+        .editor-buttons button:hover {
+            opacity: 0.9;
+        }
+
+        #save-btn { background-color: #27ae60; color: white; }
+        #cancel-btn { background-color: #c0392b; color: white; }
+
+
+        /* Note display styling */
+        .note {
+            background-color: transparent;
+            border-bottom: 1px dashed #ccc;
+            padding: 20px 10px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .note:last-child {
+            border-bottom: none;
+        }
+        
+        .note-heading {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin: 0 0 10px 0;
+        }
+
+        .note-content p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin: 0;
+            color: #333;
+        }
+        
+        .note-content s {
+            color: #e74c3c;
+            text-decoration-thickness: 2px;
+            text-decoration-color: #c0392b;
+        }
+
+        .note .timestamp {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-top: 15px;
+            text-align: right;
+            font-style: italic;
+        }
+        
+        .edit-btn {
+            position: absolute;
+            top: 20px;
+            right: 10px;
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        
+        .no-notes-message {
+            text-align: center;
+            color: #888;
+            padding: 40px;
+            font-style: italic;
+        }
+    </style>
 </head>
 <body>
-    <div class="app-container">
-        <h1>Permanent Notes</h1>
 
-        <button id="create-note-btn">Create a New Note</button>
+    <!-- PAGE 1: The Book Cover -->
+    <div id="book-cover-page">
+        <div class="book-title">
+            <h1>My Gym Diary</h1>
+            <p>Light Wieght Baby.....</p>
+        </div>
+        <button id="open-book-btn">Let's Go</button>
+    </div>
 
-        <div id="note-editor" class="hidden">
-            <textarea id="note-input" placeholder="Write your note here..."></textarea>
-            <div class="editor-buttons">
-                <button id="save-btn">Save</button>
-                <button id="cancel-btn">Cancel</button>
+    <!-- PAGE 2: The Main App (hidden by default) -->
+    <div id="main-app-page" class="hidden">
+        <div class="app-container">
+            <div class="app-navigation">
+                <button id="write-new-btn">Write a New Entry</button>
+                <button id="view-all-btn">View All Entries</button>
+                <button id="close-book-btn">Close Book</button>
+            </div>
+
+            <!-- Editor for new notes -->
+            <div id="note-editor" class="hidden">
+                <h2>New Entry</h2>
+                <input type="hidden" id="note-edit-index">
+                <input type="text" id="note-heading-input" placeholder="Entry Title...">
+                <textarea id="note-input" placeholder="Your thoughts are permanent here..."></textarea>
+                <div class="editor-buttons">
+                    <button id="save-btn">Save Entry</button>
+                    <button id="cancel-btn">Cancel</button>
+                </div>
+            </div>
+
+            <!-- Container for all saved notes -->
+            <div id="notes-container">
+                <h2>My Past Entries</h2>
+                <div id="notes-list">
+                    <!-- Notes will be dynamically inserted here -->
+                </div>
             </div>
         </div>
-
-        <hr>
-
-        <h2>My Notes</h2>
-        <div id="notes-container">
-            <p class="no-notes-message">You don't have any notes yet.</p>
-        </div>
     </div>
-    <script src="script_notes.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Page Elements ---
+            const bookCoverPage = document.getElementById('book-cover-page');
+            const mainAppPage = document.getElementById('main-app-page');
+            const openBookBtn = document.getElementById('open-book-btn');
+
+            // --- App Navigation Elements ---
+            const writeNewBtn = document.getElementById('write-new-btn');
+            const viewAllBtn = document.getElementById('view-all-btn');
+            const closeBookBtn = document.getElementById('close-book-btn');
+
+            // --- App Section Elements ---
+            const noteEditor = document.getElementById('note-editor');
+            const notesContainer = document.getElementById('notes-container');
+            const notesList = document.getElementById('notes-list');
+            const noteHeadingInput = document.getElementById('note-heading-input');
+            const noteInput = document.getElementById('note-input');
+            const editIndexInput = document.getElementById('note-edit-index');
+            const saveBtn = document.getElementById('save-btn');
+            const cancelBtn = document.getElementById('cancel-btn');
+            
+            const STORAGE_KEY = 'permanent_notes_book_v2';
+
+            // --- Local Storage Functions ---
+            const getNotes = () => JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            const saveNotes = (notes) => localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+
+            // --- View Toggling Logic ---
+            const showWriteView = () => {
+                noteEditor.classList.remove('hidden');
+                notesContainer.classList.add('hidden');
+                noteHeadingInput.focus();
+            };
+            const showAllEntriesView = () => {
+                noteEditor.classList.add('hidden');
+                notesContainer.classList.remove('hidden');
+                // Clear editor fields when switching views
+                noteHeadingInput.value = '';
+                noteInput.value = '';
+                editIndexInput.value = '';
+                displayNotes();
+            };
+
+            // --- Main Note Display Function ---
+            const displayNotes = () => {
+                const notes = getNotes();
+                notesList.innerHTML = ''; 
+
+                if (notes.length === 0) {
+                    notesList.innerHTML = '<p class="no-notes-message">You have no past entries.</p>';
+                    return;
+                }
+
+                notes.forEach((note, index) => {
+                    const noteElement = document.createElement('div');
+                    noteElement.classList.add('note');
+                    
+                    let contentHTML = `<p>${note.content.replace(/\n/g, '<br>')}</p>`;
+                    // If there's original content, show it with a strikethrough
+                    if (note.originalContent) {
+                        contentHTML = `<p><s>${note.originalContent.replace(/\n/g, '<br>')}</s></p>${contentHTML}`;
+                    }
+                    
+                    let timestampHTML = `<div class="timestamp">Written on: ${note.timestamp}</div>`;
+                    if (note.editedTimestamp) {
+                        timestampHTML = `<div class="timestamp">Edited on: ${note.editedTimestamp} (Originally: ${note.timestamp})</div>`;
+                    }
+
+                    noteElement.innerHTML = `
+                        <button class="edit-btn" data-index="${index}">Edit</button>
+                        <h3 class="note-heading">${note.heading}</h3>
+                        <div class="note-content">${contentHTML}</div>
+                        ${timestampHTML}
+                    `;
+                    notesList.prepend(noteElement);
+                });
+            };
+
+            // --- Event Listeners ---
+            openBookBtn.addEventListener('click', () => {
+                bookCoverPage.classList.add('hidden');
+                mainAppPage.classList.remove('hidden');
+                document.body.style.backgroundColor = '#fdf5e6';
+                showAllEntriesView();
+            });
+            
+            closeBookBtn.addEventListener('click', () => {
+                mainAppPage.classList.add('hidden');
+                bookCoverPage.classList.remove('hidden');
+                document.body.style.backgroundColor = '#2c3e50';
+            });
+
+            writeNewBtn.addEventListener('click', showWriteView);
+            viewAllBtn.addEventListener('click', showAllEntriesView);
+            cancelBtn.addEventListener('click', showAllEntriesView);
+
+            saveBtn.addEventListener('click', () => {
+                const heading = noteHeadingInput.value.trim();
+                const content = noteInput.value.trim();
+                const editIndex = editIndexInput.value;
+                
+                if (!content || !heading) {
+                    alert("Please provide both a heading and content for your entry.");
+                    return;
+                }
+
+                let notes = getNotes();
+                const now = new Date().toLocaleString();
+
+                if (editIndex !== '') {
+                    // --- EDITING an existing note ---
+                    const note = notes[editIndex];
+                    // If content is different and there's no original content yet, store it.
+                    if (note.content !== content && !note.originalContent) {
+                        note.originalContent = note.content;
+                    }
+                    note.heading = heading;
+                    note.content = content;
+                    note.editedTimestamp = now;
+                } else {
+                    // --- CREATING a new note ---
+                    const newNote = {
+                        heading: heading,
+                        content: content,
+                        originalContent: null,
+                        timestamp: now,
+                        editedTimestamp: null
+                    };
+                    notes.push(newNote);
+                }
+                
+                saveNotes(notes);
+                showAllEntriesView();
+            });
+
+            // --- Edit Button Listener (Event Delegation) ---
+            notesList.addEventListener('click', (event) => {
+                if (event.target.classList.contains('edit-btn')) {
+                    const index = event.target.dataset.index;
+                    const notes = getNotes();
+                    const noteToEdit = notes[index];
+                    
+                    noteHeadingInput.value = noteToEdit.heading;
+                    noteInput.value = noteToEdit.content;
+                    editIndexInput.value = index;
+                    
+                    showWriteView();
+                }
+            });
+        });
+    </script>
 </body>
 </html>
