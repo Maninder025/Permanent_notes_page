@@ -8,7 +8,7 @@ A simple and clean web application for taking notes that persist in your browser
 
 You can access the live application here:
 
-**[https://maninder025.github.io/Permanent_notes_page/](https://maninder025.github.io/Permanent_notes_page/)**
+**[Click here for the Site.](https://maninder025.github.io/Permanent_notes_page/)**
 
 ---
 
