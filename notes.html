@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Permanent Notes</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <h1>Permanent Notes</h1>
+
+        <button id="create-note-btn">Create a New Note</button>
+
+        <div id="note-editor" class="hidden">
+            <textarea id="note-input" placeholder="Write your note here..."></textarea>
+            <div class="editor-buttons">
+                <button id="save-btn">Save</button>
+                <button id="cancel-btn">Cancel</button>
+            </div>
+        </div>
+
+        <hr>
+
+        <h2>My Notes</h2>
+        <div id="notes-container">
+            <p class="no-notes-message">You don't have any notes yet.</p>
+        </div>
+    </div>
+    <script src="script_notes.js"></script>
+</body>
+</html>
